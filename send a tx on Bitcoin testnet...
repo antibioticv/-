@@ -1,0 +1,11 @@
+#向Bitcoin testnet发送tx信息
+import requests
+import re
+
+# 下为bitcoin testnet链接
+url = 'https://en.bitcoin.it/wiki/Testnet'
+tx = {'tx': 'this is 212 bitcoin project'}
+# 向链接发送信息
+post_html = requests.post(url, data=tx)
+# 输出响应信息
+print(post_html.text)

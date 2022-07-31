@@ -1,20 +1,23 @@
-#测试结果
-x= 2
-y = 2
-a = 20
-b = 'hello'
-b_1="world"
-G = [2, 1]
+#测试结果代码
+x= 212
+y = 212
+b = 'this is a test'
+b_1="this is a test too"
 n = 212
 k=1
 c= 4
-#计算公钥
-P = Multiply(d, G)
+G = [2, 1]
 
+
+#计算公钥
+P = saclar multiply(d, G)
+#数乘函数
+a=20
 print("开始测试")
 
 print("Schnorr_Sign签名、ecdsa签名使用相同的d，k，导致密钥泄露：")
 r3,s3=Sch_Sign(m,n,G,d,k)
+#Schnorr_Sign签名
 d2=Schnorr_and_ECDSA(r,s,r3,s3,b,n)
 if (d==d2):
   result=true
@@ -29,7 +32,7 @@ print("测试测试签名和验证算法：")
 r,s=Ecdsa_Sign(b,n,G,c,k)
 print("签名:",r,s)
 print("输出验证结果为：")
-Ecdsa_Verify(m,n,G,r,s,P)
+Ecdsa_Verify(m,n,G,r,s,a)
 
 
 print("测试k多次重复利用造成主密钥的泄露：")
@@ -52,13 +55,13 @@ reuse_k(s_1,b_1,s_2,m,r,5,7,n)
 
 
 
-print("检验r和-s是否为有效签名：")
+print("检验签名是否有效：")
 print("测试结果：")
-Ecdsa_Verify(m,n,G,r,-s,P)
+Ecdsa_Verify(m,n,G,r,-s,a)
 
 
 
 print(" 是否可以成功伪装为Satoshi:")
 print("测试伪装结果：")
-Pretend(r,s,n,G,P)
+Pretend(r,s,n,G,a)
 

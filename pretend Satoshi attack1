@@ -1,0 +1,163 @@
+ import random
+ import math
+ import numpy
+	
+	
+	
+	#定义判断互素函数if_Prime
+def if_Prime(a, b):
+	while a != 0:
+	  a, b = b % a, a
+    
+	return b
+	
+
+	#求最大公因子的函数
+def gcd(x,y ):
+	if if_Prime(x, y) != 1 and if_Prime(x, y) != -1:
+	   return None
+	ax1, ax2, ax3 = 1, 0, x
+	bx1, bx2, xb3 = 0, 1, y
+	while bx3 != 0:
+	  q = ax3 //bx3
+	  bx1, bx2, bx3, ax1,ax2, ax3 = (ax1 - q * bx1), (ax2 - q * bx2), (ax3 - q * bx3), bx1, bx2,bx3
+	
+  if ax1 > 0:
+	   return ax1 % y
+	else:
+	  return (ax1 + y) % y
+	
+  
+	#定义椭圆曲线点加法的函数
+def add(m, n):
+	if (m == 0):
+	  return n
+	if (n == 0):
+	  return m
+	he = []
+	 if (m != n):
+	  if (if_Prime(m[0] - n[0], p) != 1 and if_Prime(m[0] - n[0], p) != -1):
+	    return 0
+	  else:
+	   k = ((m[1] - n[1]) * gcd(m[0] - n[0], p)) % p
+	 else:
+	    k = ((3 * (m[0] ** 2) + a) * gcd(2 * m[1], p)) % p
+	a = (k ** 2 - m[0] - n[0]) % p
+	b= (k * (m[0] - x) - m[1]) % p
+	he.append(a)
+	he.append(b)
+	return he
+	
+  
+  
+	#定义椭圆曲线点的数乘
+  #saclar multiply 为数乘
+def scalar_multi(n, l):
+	if n == 0:
+	  return 0
+	if n == 1:
+	  return l
+	t = l
+	while (n >= 2):
+	  t = add(t, l)
+	  n = n - 1
+	return t
+	
+  
+  #case 1：泄露k导致密钥泄露
+def divulge_k(r,n,k,s,m):
+	r_reverse=gcd(r,n)
+	e=hash(m)
+	d=r_reverse * (k*s-e)%n
+	return d
+	
+	#case 2 重用k导致密钥泄露
+def reuse_k(r1,s1,m1,r2,s2,m2,n):
+	e1=hash(m1)
+	e2=hash(m2)
+	d=((s1 * e2 - s2 * e1) * gcd((s2 * r1 - s1 * r1), n)) % n
+	return d
+	
+	#case 3 使用相同k，可互相计算密钥
+def same_K(s1,m1,s2,m2,r,d1,d2,n):
+	e1=hash(m1)
+	e2=hash(m2)
+	d2_1 = ((s2 * e1 - s1 * e2 + s2 * r * d1) * Gcd(s1 * r, n)) % n
+	d1_1 = ((s1 * e2 - s2 * e1 + s1 * r * d2) * Gcd(s2 * r, n)) % n
+	if(d2==d2_1 and d1_1==d1):
+	  print("该密钥正确，计算结果正确")
+	  return 1
+	else:
+	  print("该密钥错误，计算结果错误")
+	  return 0
+	
+	#case 4不验证m的验证算法
+def m_out(e, n, G, r, s, P):
+	w = gcd(s, n)
+	v1 = (e * w) % n
+	v2 = (r * w) % n
+	w = add(scalar_multi(v1, G), scalar_multi(v2, P))
+	if (w == 0):
+	  print('计算结果错误')
+	return False
+	else:
+	  if (w[0] % n == r):
+	print('计算结果正确')
+	return True
+	else:
+	print('计算结果错误')
+	return False
+	
+  
+  	#Claus Schnorr签名算法
+    #G-椭圆曲线, H()-哈希函数，m-待签名消息, P-公钥，(R, s)-Schnorr签名
+def Sch_Sign(m, n, G, d,k):
+	R = scalar_multi(k, G)
+	e = hash(str(R[0]) + m)
+	s = (k + e * d) % n
+	return R, s
+  
+	#case 5伪装攻击者身份中本聪
+def Pretend(r, s, n, G, P):
+	ax = random.randrange(1, n - 1)
+	bx = random.randrange(1, n - 1)
+	r1 = add(scalar_multi(ax, G), scalar_multi(v, P))[0]
+	e1 = (r1 * ax * gcd(bx, n)) % n
+	s1 = (r1 * gcd(bx, n)) % n
+	m_out(e1, n, G, r1, s1, P)
+	#椭圆曲线数字签名算法
+def Ecdsa_Sign(m, n, G, d,k):
+   R = scalar_multi(k, G)
+	 e = hash(m)
+	
+	 r = R[0] % n
+	 s = (gcd(k, n) * (e + d * r)) % n
+	return r, s
+	
+	# 椭圆曲线数字签名算法验证
+def Ecdsa_Verify(m, n, G, r, s, P):
+	e = hash(m)
+	w = gcd(s, n)
+	v1 = (e * w) % n
+	v2 = (r * w) % n
+	w = Add(scalar_multi(v1, G), scalar_multi(v2, P))
+	if (w == 0):
+	  print('错误')
+	  return False
+	else:
+	  if (w[0] % n == r):
+	print('正确')
+	return True
+	else:
+	  print('错误')
+	  return False
+	
+	
+	
+	
+	#Claus Schnorr签名、ecdsa签名使用相同的d，k，导致密钥泄露
+	def Schnorr_and_ECDSA(r1, s1, R, s2, m, n):
+	a = int(hash(m))
+	b = int(hash(str(R[0]) + m))
+	d = ((s1 * s2 - a) * Gcd((s1 * b + r1), n)) % n
+	return d

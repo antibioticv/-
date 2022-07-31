@@ -4,7 +4,7 @@ import base64
 from Cryptodome.Cipher import AES
 from binascii import b2a_hex,a2b_hex
 from Cryptodome import Random
-class CurveFp:
+class CurveFp:                              #随机生成公私密钥
 	def __init__(self, A, B, P, N, Gx, Gy, name):
 		self.A = A
 		self.B = B

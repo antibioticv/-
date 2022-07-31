@@ -4,7 +4,7 @@ import math
 import binascii
 x_G=0x421debd61b62eab6746434ebc3cc315e32220b3badd50bdc4c4e6c147fedd43d
 y_G=0x0680512bcbb42c07d47349d2153b70c4e5d7fdfcbfa36ea1a85841b9e46e09a2
-G=(int(x_G),int(y_G))        #基点
+G=(int(x_G),int(y_G))        #基点坐标
 n=0x8542d69e4c044f18e8b92435bf6ff7dd297720630485628d5ae74ee7c32e79b7
 d1=random.randint(1,n)
 d2=random.randint(1,n)
@@ -17,7 +17,7 @@ def Hash(str):     #采用sha256作为hash函数
     m.update(str.encode(encoding='utf-8'))
     str_sha256=m.hexdigest()
     return str_sha256
-def KDF(x,klen):
+def KDF(x,klen):                #密钥生成函数
     ct=0x00000001
     K=''
     for i in range(1,klen//256):
